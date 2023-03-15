@@ -1,0 +1,17 @@
+{
+  "name": "architect-test-app",
+  "version": "0.0.0",
+  "description": "A Sample new Architect project!",
+  "scripts": {
+    "start": "npx sandbox"
+  },
+  "devDependencies": {
+    "@architect/architect": "^10.10.3",
+    "@architect/plugin-typescript": "^1.1.0",
+    "@types/node": "^18.15.3"
+  },
+  "dependencies": {
+    "@ilc-technology/env-utils": "^2.1.0",
+    "@storyblok/js": "^2.1.0"
+  }
+}
