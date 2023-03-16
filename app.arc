@@ -4,6 +4,7 @@ architect-poc-app
 @http
 get /markets
 get /stories
+get /data
 @aws
 runtime typescript
 # profile default

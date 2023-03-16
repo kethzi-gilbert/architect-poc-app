@@ -1,3 +1,4 @@
+// This Lambda function fetches data of published stories for de market with slugs cc from storyblok
 import { storyblokInit, apiPlugin } from "@storyblok/js";
 
 export async function handler(request: any, context: any): Promise<any> {

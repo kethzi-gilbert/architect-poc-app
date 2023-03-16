@@ -1,3 +1,4 @@
+// This Lambda Function connects to the martech utils library and fetches information of all markets
 import { getAllMarketInfo, MarketInfo } from "@ilc-technology/env-utils";
 
 export async function handler(request: any, context: any): Promise<any> {
