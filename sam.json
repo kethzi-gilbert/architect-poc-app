@@ -1,7 +1,7 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
   "Transform": "AWS::Serverless-2016-10-31",
-  "Description": "Exported by architect/package@8.4.1 on 2023-03-15T13:26:55.403Z",
+  "Description": "Exported by architect/package@8.4.1 on 2023-03-15T16:02:37.649Z",
   "Resources": {
     "Role": {
       "Type": "AWS::IAM::Role",
@@ -190,6 +190,19 @@
                 }
               }
             },
+            "/stories": {
+              "get": {
+                "x-amazon-apigateway-integration": {
+                  "payloadFormatVersion": "2.0",
+                  "type": "aws_proxy",
+                  "httpMethod": "POST",
+                  "uri": {
+                    "Fn::Sub": "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetStoriesHTTPLambda.Arn}/invocations"
+                  },
+                  "connectionType": "INTERNET"
+                }
+              }
+            },
             "/{proxy+}": {
               "get": {
                 "x-amazon-apigateway-integration": {
@@ -232,7 +245,7 @@
       "Type": "AWS::Serverless::Function",
       "Properties": {
         "Handler": "index.handler",
-        "CodeUri": "/Users/kethzigilbert/Documents/architect-test-app/.build/http/get-markets",
+        "CodeUri": "/Users/kethzigilbert/Documents/architect-poc-app/.build/http/get-markets",
         "Runtime": "nodejs16.x",
         "Architectures": [
           "arm64"
@@ -289,11 +302,72 @@
         "path": "/markets"
       }
     },
+    "GetStoriesHTTPLambda": {
+      "Type": "AWS::Serverless::Function",
+      "Properties": {
+        "Handler": "index.handler",
+        "CodeUri": "/Users/kethzigilbert/Documents/architect-poc-app/.build/http/get-stories",
+        "Runtime": "nodejs16.x",
+        "Architectures": [
+          "arm64"
+        ],
+        "MemorySize": 1152,
+        "EphemeralStorage": {
+          "Size": 512
+        },
+        "Timeout": 5,
+        "Environment": {
+          "Variables": {
+            "ARC_APP_NAME": "architect-poc-app",
+            "ARC_ENV": "staging",
+            "ARC_ROLE": {
+              "Ref": "Role"
+            },
+            "ARC_SESSION_TABLE_NAME": "jwe",
+            "ARC_STACK_NAME": {
+              "Ref": "AWS::StackName"
+            },
+            "ARC_STATIC_BUCKET": {
+              "Ref": "StaticBucket"
+            },
+            "ARC_STATIC_SPA": false
+          }
+        },
+        "Role": {
+          "Fn::Sub": [
+            "arn:aws:iam::${AWS::AccountId}:role/${roleName}",
+            {
+              "roleName": {
+                "Ref": "Role"
+              }
+            }
+          ]
+        },
+        "Events": {
+          "GetStoriesHTTPEvent": {
+            "Type": "HttpApi",
+            "Properties": {
+              "Path": "/stories",
+              "Method": "GET",
+              "ApiId": {
+                "Ref": "HTTP"
+              }
+            }
+          }
+        }
+      },
+      "ArcMetadata": {
+        "pragma": "http",
+        "name": "get /stories",
+        "method": "get",
+        "path": "/stories"
+      }
+    },
     "GetCatchallHTTPLambda": {
       "Type": "AWS::Serverless::Function",
       "Properties": {
         "Handler": "index.handler",
-        "CodeUri": "/Users/kethzigilbert/Documents/architect-test-app/node_modules/@architect/asap/src",
+        "CodeUri": "/Users/kethzigilbert/Documents/architect-poc-app/node_modules/@architect/asap/src",
         "Runtime": "nodejs16.x",
         "Architectures": [
           "x86_64"

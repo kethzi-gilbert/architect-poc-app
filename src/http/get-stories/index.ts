@@ -12,8 +12,6 @@ export async function handler(request: any, context: any): Promise<any> {
     },
   });
   const version = 1678806921;
-
-  console.log("storyasdas", Storyblok);
   try {
     if (Storyblok) {
       const storiesPromise = await Storyblok.getAll(`cdn/stories`, {
@@ -22,7 +20,11 @@ export async function handler(request: any, context: any): Promise<any> {
         by_slugs: "cc/*",
       });
       return {
-        storiesPromise,
+        statusCode: 200,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(storiesPromise),
       };
     } else throw new Error("Market not found");
   } catch (e) {

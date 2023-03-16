@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: Exported by architect/package@8.4.1 on 2023-03-15T13:26:55.403Z
+Description: Exported by architect/package@8.4.1 on 2023-03-15T16:02:37.649Z
 Resources:
   Role:
     Type: AWS::IAM::Role
@@ -113,6 +113,15 @@ Resources:
                 uri:
                   Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetMarketsHTTPLambda.Arn}/invocations
                 connectionType: INTERNET
+          /stories:
+            get:
+              x-amazon-apigateway-integration:
+                payloadFormatVersion: '2.0'
+                type: aws_proxy
+                httpMethod: POST
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetStoriesHTTPLambda.Arn}/invocations
+                connectionType: INTERNET
           /{proxy+}:
             get:
               x-amazon-apigateway-integration:
@@ -139,7 +148,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Handler: index.handler
-      CodeUri: s3://architect-poc-app-cfn-deployments-f558f/0d6ee43f33b05a46d461f1fcc25fbdbf
+      CodeUri: s3://architect-poc-app-cfn-deployments-f558f/d7ddf6e2cf512ca52626c10097f9f29e
       Runtime: nodejs16.x
       Architectures:
       - arm64
@@ -177,6 +186,48 @@ Resources:
       name: get /markets
       method: get
       path: /markets
+  GetStoriesHTTPLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: index.handler
+      CodeUri: s3://architect-poc-app-cfn-deployments-f558f/63686e09da6c13c1bf93ea80cc4f6c51
+      Runtime: nodejs16.x
+      Architectures:
+      - arm64
+      MemorySize: 1152
+      EphemeralStorage:
+        Size: 512
+      Timeout: 5
+      Environment:
+        Variables:
+          ARC_APP_NAME: architect-poc-app
+          ARC_ENV: staging
+          ARC_ROLE:
+            Ref: Role
+          ARC_SESSION_TABLE_NAME: jwe
+          ARC_STACK_NAME:
+            Ref: AWS::StackName
+          ARC_STATIC_BUCKET:
+            Ref: StaticBucket
+          ARC_STATIC_SPA: false
+      Role:
+        Fn::Sub:
+        - arn:aws:iam::${AWS::AccountId}:role/${roleName}
+        - roleName:
+            Ref: Role
+      Events:
+        GetStoriesHTTPEvent:
+          Type: HttpApi
+          Properties:
+            Path: /stories
+            Method: GET
+            ApiId:
+              Ref: HTTP
+    ArcMetadata:
+      pragma: http
+      name: get /stories
+      method: get
+      path: /stories
   GetCatchallHTTPLambda:
     Type: AWS::Serverless::Function
     Properties:
